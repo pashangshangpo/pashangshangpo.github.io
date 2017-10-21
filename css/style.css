@@ -1,0 +1,183 @@
+body {
+  background-color: #f2f2f2;
+  font-size: 1.25rem;
+  line-height: 1.5;
+}
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+}
+.header {
+  margin-top: 2em;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.header .blog-title .logo {
+  color: #aaa;
+  font-size: 2em;
+  font-family: "Comic Sans MS", cursive, LiSu, sans-serif;
+  text-decoration: none;
+}
+.header .menu {
+  margin: 0;
+  padding: 0;
+}
+.header .menu .menu-item {
+  display: inline-block;
+  margin-right: 10px;
+}
+.header .menu .menu-item-link {
+  color: #aaa;
+  text-decoration: none;
+}
+.header .menu .menu-item-link:hover {
+  color: #368ccb;
+}
+.post {
+  margin: 1em auto;
+  padding: 12px 25px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 0 2px #ddd;
+}
+.post .post:first-child {
+  margin-top: 0;
+}
+.post .post-title {
+  font-size: 1.2em;
+}
+.post .post-title .title {
+  font-size: 1em;
+  text-align: center;
+}
+.post .post-title .post-title-link {
+  color: #368ccb;
+  text-decoration: none;
+}
+.post .post-content a {
+  color: #368ccb;
+  text-decoration: none;
+}
+.post .post-meta {
+  color: #bababa;
+}
+.post .annotation {
+  width: 85%;
+  margin: auto;
+}
+.post .annotationheader {
+  font-family: "Helvetica Neue", Palatino, Georgia, Serif;
+  font-size: 15px;
+  padding-top: 36px;
+  margin-bottom: 6px;
+  display: inline-block;
+  width: 100%;
+}
+.post .annotationcontent {
+  text-align: justify;
+  margin-top: 7px;
+}
+.post .annotationdate {
+  color: #343434;
+  float: right;
+  text-align: right;
+  margin-left: 10px;
+  margin-bottom: 5px;
+}
+.post .annotationchapter {
+  color: #343434;
+  float: left;
+  text-align: left;
+  margin-bottom: 5px;
+}
+.post .annotationcontent {
+  text-align: justify;
+  margin-top: 7px;
+}
+.post .annotationselectionMarker {
+  height: 100%;
+  width: 3px;
+  display: table-cell;
+}
+.post .annotationselectioninnermargin {
+  width: 10px;
+  display: table-cell;
+}
+.post .annotationrepresentativetext {
+  font-family: "Helvetica Neue", Palatino, Georgia, Serif;
+  color: #232323;
+  font-size: 15px;
+  line-height: 19px;
+  margin-top: 0px;
+  display: table-cell;
+}
+.post .annotationnote {
+  font-family: "Helvetica Neue", arial, sans-serif;
+  font-size: 15px;
+  line-height: 19px;
+  color: #232323;
+  margin-top: 24px;
+  margin-bottom: 28px;
+}
+.post .datetime {
+  position: relative;
+  border-bottom: 1px dashed #ccc;
+}
+.post .separator {
+  background: #d7d7d7;
+  margin: auto;
+  width: 85%;
+  height: 1px;
+}
+.post .yellow {
+  background: #ffe27d;
+}
+.archive {
+  margin: 1em auto;
+  padding: 30px 50px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 0 2px #ddd;
+}
+.archive .post-archive {
+  list-style: none;
+  padding: 0;
+}
+.archive .post-archive .post-item {
+  margin: 5px 0;
+}
+.archive .post-archive .post-item .post-date {
+  display: inline-block;
+  margin-right: 10px;
+  color: #bababa;
+}
+.archive .post-archive .post-item .post-title {
+  color: #368ccb;
+  text-decoration: none;
+}
+.page-nav {
+  padding: 0.5em 0;
+  text-align: center;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  box-shadow: 0 0 2px #ddd;
+}
+.page-nav .prev,
+.page-nav .next,
+.page-nav .page-number {
+  padding: 0.1em 0.5em;
+}
+.page-nav .prev {
+  float: left;
+}
+.page-nav .next {
+  float: right;
+}
+.page-nav a {
+  color: #777;
+  text-decoration: none;
+}
+.page-nav a:hover {
+  color: #368ccb;
+}
