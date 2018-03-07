@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>追梦子-react-router教程</title>
+  <link rel="stylesheet" href="/css/reset.css">
+  <link rel="stylesheet" href="/css/markdown.css">
+  <link rel="stylesheet" href="/css/monokai-sublime.css">
+  <link rel="stylesheet" href="/css/info.css">
+</head>
+
+<body>
+  <div class="box">
+    <header>
+      <h1>react-router教程</h1>
+    </header>
+    <main class="markdown-body">
+      <h2 id="-">思想</h2>
+<h3 id="-">动态路由</h3>
+<p>在应用程序呈现时发生路由，而不是在运行应用程序之前去配置或约定路由</p>
+<p>这意味着几乎所有的都是React Router中的一个组件。</p>
+<h3 id="-">路由嵌套</h3>
+<p>使用路由嵌套的概念来定义 view 的嵌套集合，当一个给定的 URL 被调用时，整个集合中（命中的部分）都会被渲染。</p>
+<ul>
+<li>v4版本已经取消嵌套路由,而是如果你没加exact,只要路径可以匹配到就会显示,而非严格匹配<ul>
+<li><pre><code class="hljs undefined"><Route path="/" component={Index} />
+<Route path="/page" component={Page} /></code></pre></li>
+<li>当访问/时,以上都会被匹配,如果访问/page不想匹配到第一条可以给第一条加exact
+每个URL都包含域名和路径部分,但决定一个URL显示什么内容的只有路径部分,和域名端口没有关系,因此根据路径找到对应应用内容的过程,也就是react-router的重要功能,路由</li>
+</ul>
+</li>
+</ul>
+<h2 id="-">组件</h2>
+<h3 id="-browserrouter-">#BrowserRouter: = 浏览器路由</h3>
+<ul>
+<li>basename：string<ul>
+<li>所有位置的基本URL。如果您的应用程序是从服务器上的子目录提供的，则需要将其设置为子目录。正确格式化的基础名称应该有一个主要的斜杠，但没有尾部斜杠。</li>
+</ul>
+</li>
+<li>getUserConfirmation：func<ul>
+<li>用于确认导航的功能。默认使用window.confirm。</li>
+</ul>
+</li>
+<li>forceRefresh：bool<ul>
+<li>如果true路由器将在页面导航中使用全页刷新。您可能只想在不支持HTML5历史记录API的浏览器中使用此功能。</li>
+</ul>
+</li>
+<li>keyLength：number<ul>
+<li>location.key长度,默认为6。</li>
+</ul>
+</li>
+<li>children: node<ul>
+<li>一个单一的子元素来呈现。
+一个<code>&lt;Router&gt;</code>使用HTML5历史API（ pushState，replaceState和popstate事件），让您的UI同步与URL。</li>
+</ul>
+</li>
+</ul>
+<h3 id="-memoryrouter-">#MemoryRouter: = 内存路由</h3>
+<ul>
+<li>initialEntries：array<ul>
+<li>location历史堆栈中的数组。这些可能是具有{ pathname, search, hash, state }或简单字符串URL的完整位置对象。</li>
+</ul>
+</li>
+<li>initialIndex：number<ul>
+<li>数组中的初始位置索引initialEntries。</li>
+</ul>
+</li>
+<li>getUserConfirmation：func<ul>
+<li>用于确认导航的功能。您<code>&lt;MemoryRouter&gt;</code>直接使用a 时必须使用此选项<code>&lt;Prompt&gt;</code>。</li>
+</ul>
+</li>
+<li>keyLength：number<ul>
+<li>的长度location.key。默认为6。</li>
+</ul>
+</li>
+<li>children: node<ul>
+<li>一个单一的子元素来呈现。
+一个<code>&lt;Router&gt;</code>将您的“URL”的历史记录存储在内存中（不读取或写入地址栏）。在测试和非浏览器环境（如React Native）中很有用。</li>
+</ul>
+</li>
+</ul>
+<h3 id="-hashrouter-">#HashRouter: = 锚点路由</h3>
+<ul>
+<li>basename：string<ul>
+<li>所有位置的基本URL。正确格式化的基础名称应该有一个主要的斜杠，但没有尾部斜杠。</li>
+</ul>
+</li>
+<li>getUserConfirmation：func<ul>
+<li>用于确认导航的功能。默认使用window.confirm。</li>
+</ul>
+</li>
+<li>hashType：string<ul>
+<li>要使用的编码类型window.location.hash。可用值为：</li>
+<li>&quot;slash&quot;- 创建哈希像#/和#/sunshine/lollipops</li>
+<li>&quot;noslash&quot;- 创建哈希像#和#sunshine/lollipops</li>
+<li>&quot;hashbang&quot;-创建“可抓取的AJAX”（由谷歌弃用）散列像#!/和#!/sunshine/lollipops</li>
+<li>默认为&quot;slash&quot;。</li>
+</ul>
+</li>
+<li>children: node<ul>
+<li>一个单一的子元素来呈现。</li>
+</ul>
+</li>
+<li>使用哈希的方式使UI与URL同步<ul>
+<li>location.hash</li>
+</ul>
+</li>
+</ul>
+<h3 id="-route-">#Route: = 当前位置与指定路径匹配时显示此路由下的内容</h3>
+<ul>
+<li>path: string<ul>
+<li>需匹配的路径</li>
+</ul>
+</li>
+</ul>
+<p>如: page/index</p>
+<pre><code class="hljs undefined">- 当值为空或/时将总是匹配</code></pre><ul>
+<li>exact: bool<ul>
+<li>是否要严格匹配路径,如<ul>
+<li>a/ab</li>
+<li>a/bc</li>
+<li>如果值为false,那么这两个都会被匹配中</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>strict: bool<ul>
+<li>尾部是否要匹配/才算成功,如<ul>
+<li>a/aa false</li>
+<li>a/aa/ true</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>render: func<ul>
+<li>render 允许你创建一个直接返回 UI 的内联函数而不用创建额外的组件</li>
+</ul>
+</li>
+<li>children: func<ul>
+<li>不会去匹配路径,总是会被执行,这样我们可以动态的匹配路径,并调整相应的UI</li>
+<li>利用children实现动态设置样式<ul>
+<li><pre><code class="hljs undefined"><Route path="/index" children={({match}) => {
+return <div className={match ? 'active' : ''}>Index</div>;
+}} /></code></pre></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>component: func<ul>
+<li>组件
+render和component属性没有什么区别,都可以传递一个函数进去,虽然component使用的是React.createElement(component, props)方法,而render被当做一个函数来执行,应该是React.createElement支持传递一个函数吧</li>
+</ul>
+</li>
+</ul>
+<h3 id="-withrouter-">#withRouter: = 在非路由组件中使用路由</h3>
+<p>在非路由组件中使用路由功能 { match, location, history }</p>
+<pre><code class="hljs undefined">import {
+    BrowserRouter as Router,
+    Route,
+    withRouter
+} from 'react-router-dom'
+
+class Home extends Component {
+    goIndex() {
+        this.props.history.push('/index');
+    }
+
+    render() {
+        console.log(this);
+        return <div onClick={this.goIndex.bind(this)}>Home</div>;
+    }
+}
+
+var Index = withRouter(Home);
+
+class App extends Component {
+  render() {
+    return (
+      <Router>
+          <div>
+              <Route path="/:id" render={(props) => {
+                  return <div>{props.match.params.id}</div>;
+              }} />
+              <Index></Index>
+          </div>
+      </Router>
+    );
+  }
+}</code></pre><p>例子</p>
+<pre><code class="hljs undefined">const AuthButton = withRouter(({ history }) => (
+  fakeAuth.isAuthenticated ? (
+    <p>
+      Welcome! <button onClick={() => {
+        fakeAuth.signout(() => history.push('/'))
+      }}>Sign out</button>
+    </p>
+  ) : (
+    <p>You are not logged in.</p>
+  )
+))</code></pre><h3 id="-redirect-">#Redirect: = 重定向</h3>
+<ul>
+<li><p>to: string | object</p>
+<ul>
+<li><p>string</p>
+<ul>
+<li>要重定向到的网址</li>
+<li>当某个页面无法使用时,可以重定向到另一个页面</li>
+<li><pre><code class="hljs undefined"><Redirect to="/somewhere/else"/></code></pre></li>
+<li><p>例子</p>
+<ul>
+<li><code>`</code>
+<Router>
+<div>
+<Route path="/index" render={() => {
+var isOne = true;
+if (isOne) {
+isOne = false;
+return <Redirect to="/page"></Redirect>;
+}</li>
+</ul>
+<p>return <div>Index</div>;
+}}&gt;</Route>
+<Route path="/page" render={() => <div>Page</div>}&gt;</Route>
+</div>
+</Router>
+<code>`</code></p>
+</li>
+</ul>
+</li>
+<li><p>object</p>
+<ul>
+<li>要重定向到的位置。</li>
+<li><pre><code class="hljs undefined"><Redirect to={{
+pathname: '/login',
+search: '?utm=your+face',
+hash: '#the-hash',
+state: { referrer: currentLocation }
+}}/></code></pre></li>
+<li><p>例子</p>
+<ul>
+<li><pre><code class="hljs undefined"><Router>
+<div>
+<Route path="/index" render={() => {
+    var page = Math.ceil(Math.random() * 10);
+
+    return <Redirect to={{
+        pathname: '/page',
+        search: `?id=${page}`,
+        state: {
+            id: page
+        }
+    }}></Redirect>;
+}}></Route>
+<Route path="/page" render={({location}) => {
+    return <div>Page {location.state.id}</div>;
+}}></Route>
+</div>
+</Router></code></pre></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>push: bool<ul>
+<li>当为真时，重定向会将新条目推入历史记录，而不是替换当前条目。</li>
+</ul>
+</li>
+<li>from: string<ul>
+<li>要重定向的路径名,只能用在<code>&lt;Switch&gt;</code>中匹配位置,如果不在<code>&lt;Switch&gt;</code>中使用,则与没有使用from的效果是一样的</li>
+<li><pre><code class="hljs undefined"><Switch>
+<Redirect from="/page123" to="/page"></Redirect>
+<Route path="/page" render={() => {
+return <div>Page</div>;
+}}></Route>
+</Switch></code></pre>注意: 新位置将覆盖历史堆栈中的当前位置</li>
+</ul>
+</li>
+</ul>
+<p>跳转跟重定向的区别在于,重定向是直接跳转,而跳转需要用手动操作</p>
+<h3 id="-link-">#Link: = 链接</h3>
+<ul>
+<li>to: string | object<ul>
+<li>string<ul>
+<li><pre><code class="hljs undefined"><Link to="/about">About</Link></code></pre></li>
+</ul>
+</li>
+<li>object<ul>
+<li><pre><code class="hljs undefined"><Link to={{
+pathname: '/courses',
+search: '?sort=name',
+hash: '#the-hash',
+state: { fromDashboard: true }
+}}/></code></pre></li>
+</ul>
+</li>
+<li>#注意: 如果是自闭和标签会直接跳转,因此也可以当做<code>&lt;Redirect&gt;</code>来使用</li>
+</ul>
+</li>
+<li>replace: bool<ul>
+<li>当为true时，单击链接将替换历史堆栈中的当前条目，而不是添加新条目。</li>
+</ul>
+</li>
+<li>自定义链接<ul>
+<li><code>`</code>
+const CustomLinkExample = () =&gt; (
+<Router>
+<div>
+<OldSchoolMenuLink activeOnlyWhenExact={true} to="/" label="Home"/>
+<OldSchoolMenuLink to="/about" label="About"/>
+<hr/>
+<Route exact path="/" component={Home}/>
+<Route path="/about" component={About}/>
+</div>
+</Router>
+)</li>
+</ul>
+</li>
+</ul>
+<p>const OldSchoolMenuLink = ({ label, to, activeOnlyWhenExact }) =&gt; (
+  <Route path={to} exact={activeOnlyWhenExact} children={({ match }) => (
+    &lt;div className={match ? &#39;active&#39; : &#39;&#39;}&gt;
+      {match ? &#39;&gt; &#39; : &#39;&#39;}<Link to={to}>{label}</Link>
+    </div>
+  )}/&gt;
+)</p>
+<pre><code class="hljs undefined">
+### #NavLink: = 当与当前URL匹配时，将向渲染元素添加样式属性
+- activeClassName: string
+    - 活动时的类名,不设置的话,默认为active
+    -</code></pre><p>&lt;NavLink
+  to=&quot;/faq&quot;
+  activeClassName=&quot;selected&quot;</p>
+<blockquote>
+<p>FAQs</NavLink></p>
+<pre><code class="hljs undefined">- activeStyle: object
+    - 当元素处于活动状态时应用于元素的样式。
+    -</code></pre><p> &lt;NavLink
+  to=&quot;/faq&quot;
+  activeStyle={{
+    fontWeight: &#39;bold&#39;,
+    color: &#39;red&#39;
+   }}
+FAQs</NavLink></p>
+<pre><code class="hljs undefined">- exact: bool
+    - 当为真时，仅当位置匹配完全时，才会应用活动类/样式。
+    -</code></pre></blockquote>
+<p>&lt;NavLink
+  exact
+  to=&quot;/profile&quot;</p>
+<blockquote>
+<p>Profile</NavLink></p>
+<pre><code class="hljs undefined">    - 只要加上exact就为true
+- strict: bool
+    - 当为真时，需要完整匹配当前路径,包括尾部的斜杠
+    -</code></pre></blockquote>
+<p>&lt;NavLink
+  strict
+  to=&quot;/events/&quot;</p>
+<blockquote>
+<p>Events</NavLink></p>
+<pre><code class="hljs undefined">    - 只要加上strict就为true
+- isActive: func
+    - 手动判断是否要加active
+    -</code></pre></blockquote>
+<p>&lt;NavLink to=&quot;/about&quot; activeStyle={{color: &#39;red&#39;}} isActive={(match) =&gt; {
+      return match;
+}}&gt;About</NavLink></p>
+<pre><code class="hljs undefined">- location: object
+    - isActive比较当前的历史记录位置（通常是当前的浏览器URL）。要与其他位置进行比较，可以传递一个位置。
+    -</code></pre><Route path="/index" render={({location}) => {
+      return (
+          &lt;NavLink to=&quot;/about&quot; location={location} activeStyle={{color: &#39;red&#39;}} isActive={(match, location) =&gt; {
+              return location.pathname === &#39;/index&#39;;
+          }}&gt;About</NavLink>
+      );
+  }}&gt;
+</Route>
+<code>`&lt;Link&gt;`的特殊版本，当与当前URL匹配时，将向渲染元素添加样式属性。
+
+与`&lt;Link&gt;`组件的另外一个区别就是,`&lt;NavLink&gt;`并不会进行跳转,而是类似tab切换
+
+
+### #Prompt: = 用于在离开页面之前提示用户
+- message: string | func
+    - string
+        - 当用户尝试离开本页面时,会弹出一个框提示用户是否要离开本页面
+        - 默认使用的是window.confirm方法
+        -</code>
+<Prompt message="out this page?"></Prompt>
+<code>- func
+        - 当用户尝试离开当前页面时会传递下一个页面的location对象给函数的第一个参数,如果返回字符串则字符串会被用做提示,如果返回true则不弹出提示
+        -</code>
+<Prompt message={location => {
+  console.log(location);
+  return location.pathname;
+}}&gt;</Prompt>
+<code>- when: bool
+    - true弹出提示用户是否要离开当前页面,false允许离开当前页
+    - 可以配合message一起使用,当你想动态的判断是否要显示弹窗时可以使用这个属性
+    -</code>
+<Prompt
+          when={isBlocking}
+          message={location => (
+            <code>Are you sure you want to go to ${location.pathname}</code>
+          )}
+        /&gt;
+        <code>- 参考: https://reacttraining.com/react-router/web/example/preventing-transitions
+使用场景: 如表单已经填写一半时，但用户点击关闭页面,那么就可以用这个来提示用户
+
+
+### #StaticRouter: = 静态路由
+- basename: string
+    - 所有地址的基本 URL . 正确格式化的基本名称应该有一个主要的斜杠，但没有尾部斜杠
+    -</code>
+<StaticRouter basename="/calendar">
+  <Link to="/today"/> // renders <a href="/calendar/today">
+</StaticRouter>
+<code>- location: string | object
+    - string
+        - 服务器收到的 URL, 在 node 服务上可能是 req.url
+        -</code>
+<StaticRouter location={req.url}>
+  <App/>
+</StaticRouter>
+<code>- object
+        - 一个格式像 { pathname, search, hash, state } 的地址对象
+        -</code>
+<StaticRouter location={{ pathname: '/bubblegum' }}>
+  <App/>
+</StaticRouter>
+<code>- context: object
+    - 记录渲染结果的纯JavaScript对象。
+- children: node
+    - 要呈现的单个子元素。
+当用户实际上没有点击时, 这在服务端的渲染场景中可能会非常有用, 所以这个地址从来没有改变. 因此, 称为: static (静态). 当您只需要插入一个位置并在渲染输出上作出断言时，它也可用于简单的测试
+
+该 Router 组件类型是采用服务端渲染方案的最佳选择。它永远不会改变位置, 这是我们在本场景下所需要的, 因为是在后台上, 我们只会渲染一次，而且不会直接地对用户的交互操作做出反应。
+
+您可以使用StaticRouter将组件包装在测试中，以将路由器上下文导入到您的组件中：
+
+## 教程
+
+### 自定义URL参数</code>
+<Route path="/:id" render={(props) => {
+  return <div>{props.match.params.id}</div>;
+}} /&gt;
+<code>自定义参数通过:xx定义,参数会保存在match.params对象中
+
+
+### 传值的几种方式
+- props.params
+    -</code>
+// 路由定义
+<Route path='/user/:name' component={UserPage}></Route>
+
+<p>// 使用</p>
+<Link to="/user/sam">用户</Link>
+或
+hashHistory.push(&quot;/user/sam&quot;);
+
+// 获取
+this.props.params.name
+<code>- query
+    - 首先定义路由：</code>
+<Route path='/user' component={UserPage}></Route>
+<code>跳转</code>
+var data = {id:3,name:sam,age:36};
+var path = {
+  pathname:&#39;/user&#39;,
+  query:data,
+}
+
+// 1
+<Link to={path}>用户</Link>
+
+<p>// 2
+hashHistory.push(path);</p>
+<pre><code class="hljs undefined">
+获取数据：</code></pre><p>var data = this.props.location.query;
+var {id,name,age} = data;</p>
+<pre><code class="hljs undefined">- state
+    - 首先定义路由：</code></pre><p><Route path='/user' component={UserPage}></Route></p>
+<pre><code class="hljs undefined">跳转</code></pre><p>var data = {id:3,name:sam,age:36};
+var path = {
+  pathname:&#39;/user&#39;,
+  state:data,
+}</p>
+<p>// 1</p>
+<Link to={path}>用户</Link>
+
+<p>// 2
+hashHistory.push(path);</p>
+<pre><code class="hljs undefined">
+获取数据：</code></pre><p>var data = this.props.location.query;
+var {id,name,age} = data;</p>
+<pre><code class="hljs undefined">query和state的方式有缺点,如果后退再回到前面那个页面,数据就没了
+
+- v4使用search
+    -</code></pre><p>/**</p>
+<ul>
+<li>@file Router
+*/
+import React, {Component} from &#39;react&#39;;
+import {Route, Redirect, HashRouter} from &#39;react-router-dom&#39;;
+import queryString from &#39;query-string&#39;;</li>
+</ul>
+<p>class Index extends Component {</p>
+<pre><code class="hljs undefined">goPage() {
+    this.props.history.push({
+        pathname: '/page',
+        search: queryString.stringify({a: 11})
+    });
+}
+
+render() {
+    return (
+        <div>
+            <h2>Index</h2>
+            <button onClick={this.goPage.bind(this)}>到Page</button>
+        </div>
+    );
+}</code></pre><p>}</p>
+<p>let Page = (props) =&gt; {
+    let search = queryString.parse(props.location.search);</p>
+<pre><code class="hljs undefined">return (
+    <div>Page {search.a}</div>
+);</code></pre><p>};</p>
+<p>export default class Router extends React.Component {
+    render() {
+        return (
+            <HashRouter>
+                <div>
+                    <Route exact path="/" component={Index} />
+                    <Route exact path="/page" component={Page} />
+                </div>
+            </HashRouter>
+        );
+    }
+};</p>
+<pre><code class="hljs undefined">
+### 使用router
+需要定义contextTypes
+</code></pre><p>static contextTypes = {
+    router: PropTypes.object.isRequired
+};</p>
+<pre><code class="hljs undefined">
+使用
+</code></pre><p>this.context.router.history.push(url);</p>
+<pre><code class="hljs undefined">
+
+### 配置404页面</code></pre><p>/**</p>
+<ul>
+<li>@file Router
+*/
+import React from &#39;react&#39;;
+import {Switch, Route, Redirect, HashRouter} from &#39;react-router-dom&#39;;
+import Home from &#39;./Home&#39;;
+import Page from &#39;./Page&#39;;
+import NotPage from &#39;./NotPage&#39;;
+import Nav from &#39;./Nav&#39;;</li>
+</ul>
+<p>export default class Router extends React.Component {
+    render() {
+        return (
+            <HashRouter>
+                <div>
+                    <Nav/>
+                    <Switch>
+                        <Route exact path="/" component={Home} />
+                        <Route exact path="/home" component={Home} />
+                        <Route exact path="/page" component={Page} />
+                        <Route component={NotPage} />
+                    </Switch>
+                </div>
+            </HashRouter>
+        );
+    }
+};</p>
+<pre><code class="hljs undefined">
+
+### 模糊匹配
+https://reacttraining.com/react-router/web/example/ambiguous-matches
+
+
+### 配置路由</code></pre><p>const routes = [
+  { path: &#39;/sandwiches&#39;,
+    component: Sandwiches
+  },
+  { path: &#39;/tacos&#39;,
+    component: Tacos,
+    routes: [
+      { path: &#39;/tacos/bus&#39;,
+        component: Bus
+      },
+      { path: &#39;/tacos/cart&#39;,
+        component: Cart
+      }
+    ]
+  }
+]</p>
+<pre><code class="hljs undefined">
+如果想按照以上形式去写,可以看看下面的示例
+
+https://reacttraining.com/react-router/web/example/route-config
+
+
+### 防止路由组件不更新
+React Router有一些位置感知组件，它们使用当前位置对象来确定它们呈现的内容。默认情况下，使用React的上下文模型将当前位置隐式传递给组件。当位置更改时，这些组件应使用上下文中的新位置对象进行重新渲染。
+
+React提供了两种方法来优化应用程序的渲染性能：shouldComponentUpdate生命周期方法和PureComponent。两者都阻止重新渲染组件，除非满足正确的条件。不幸的是，这意味着如果React Router的重新呈现被阻止，React Router的位置感知组件可能与当前位置不同步。
+
+- shouldComponentUpdate
+    - 当使用此方法时,路由不知道位置已更改,为了实现shouldComponentUpdate的组件知道应该在位置更改时更新，我们可以比较一下当前的位置和下一个context.router对象的位置,或者比较当前和下一个位置而不触及上下文,那是最好的了
+    - 连接和观察器都会创建其组件，其shouldComponentUpdate方法对其当前道具及其下一个道具进行浅层比较。这些组件只有在至少一个支柱已经改变时才会重新渲染。这意味着为了确保它们在位置更改时更新，它们将需要被赋予一个在位置更改时更改的支柱。
+- PureComponent
+    - React的PureComponent不实现shouldComponentUpdate，但它采取类似的方法来防止更新。当“纯”组件更新时，会将其当前道具和状态与下一个道具和状态进行比较。如果比较没有检测到任何差异，组件将不会更新。与shouldComponentUpdate一样，这意味着为了强制“纯”组件在位置更改时进行更新，它需要具有更改的prop或state。
+    - 避免在位置更改后阻止重新渲染的关键是将阻挡组件作为支柱传递位置对象。
+- 获取位置
+    - 为了将当前位置对象作为支持传递给组件，您必须具有对其的访问权限。组件可以访问该位置的主要方式是通过`<Route>`组件。当`<Route>`匹配（或者总是使用children道具）时，它将当前位置传递给它呈现的子元素。
+    - 这意味着给定一个阻止更新的组件，您可以通过以下方式轻松将其作为支路传递：
+        - 直接由<Route>呈现的组件不必担心阻止更新，因为它将位置注入为支柱。
+        - 由`<Route>`直接呈现的组件可以将该位置支持传递给其创建的任何子元素。
+    - 当组件未被`<Route>`渲染并且渲染它的组件在其可变范围内没有位置时会发生什么？您可以采用两种方法将自动注入位置作为您的组件的支柱。
+        - 渲染无路径的`<Route>`。虽然`<Route>`通常用于匹配特定路径，但无路径`<Route>`将始终匹配，因此它将始终呈现其组件。
+        - 您可以使用withRouter高阶组件包装组件，并将其作为其道具之一赋予当前位置。
+    - 参考: https://reacttraining.com/react-router/web/guides/dealing-with-update-blocking
+
+### 测试
+React路由器依赖于React上下文来工作。这会影响如何测试使用组件的组件。
+
+如果您尝试单元测试渲染一个`<Link>`或一个`<Route>`等等的组件，您将收到一些关于上下文的错误和警告。虽然您可能会试图自己存储路由器上下文，但我们建议您将单元测试包装在一个`<StaticRouter>`或一个`<MemoryRouter>`。
+
+参考: https://reacttraining.com/react-router/web/guides/testing
+
+
+### 滚动恢复
+参考: https://reacttraining.com/react-router/web/guides/scroll-restoration
+
+
+### 代码拆分
+- 示例
+    -</code></pre><p>import React, {Component} from &#39;react&#39;;
+import {Route, HashRouter} from &#39;react-router-dom&#39;;</p>
+<p>class Bundle extends Component {
+    state = {
+        // short for &quot;module&quot; but that&#39;s a keyword in js, so &quot;mod&quot;
+        mod: null
+    }</p>
+<pre><code class="hljs undefined">componentWillMount() {
+    this.load(this.props)
+}
+
+componentWillReceiveProps(nextProps) {
+    if (nextProps.load !== this.props.load) {
+        this.load(nextProps)
+    }
+}
+
+load(props) {
+    this.setState({
+        mod: null
+    })
+    props.load((mod) => {
+        this.setState({
+            // handle both es imports and cjs
+            mod: mod.default ? mod.default : mod
+        })
+    })
+}
+
+render() {
+    return this.state.mod ? this.props.children(this.state.mod) : null
+}</code></pre><p>}</p>
+<p>// components load their module for initial visit
+const About = (props) =&gt; (
+    <Bundle load={() => import(&#39;./loadAbout&#39;)}&gt;
+        {(About) =&gt; <About {...props}/>}
+    </Bundle>
+)</p>
+<p>const Dashboard = (props) =&gt; (
+    <Bundle load={() => import(&#39;./loadDashboard&#39;)}&gt;
+        {(Dashboard) =&gt; <Dashboard {...props}/>}
+    </Bundle>
+)</p>
+<p>class App extends Component {
+    render() {
+        return (
+            <HashRouter>
+                <div>
+                    <h1>Welcome!</h1>
+                    <Route path="/about" component={About}/>
+                    <Route path="/dashboard" component={Dashboard}/>
+                </div>
+            </HashRouter>
+        )
+    }
+}</p>
+<p>export default App;</p>
+<pre><code class="hljs undefined">- import()
+    - 这里的import不同于模块引入时的import，可以理解为一个动态加载的模块的函数(function-like)，传入其中的参数就是相应的模块。例如对于原有的模块引入import react from 'react'可以写为import('react')。但是需要注意的是，import()会返回一个Promise对象。
+- 异步加载
+    -</code></pre><p>const Chat = (props) =&gt; (
+    <Bundle load={(cb) => {
+        require.ensure([], require =&gt; {
+            cb(require(&#39;./component/chat&#39;));
+        });
+    }}&gt;
+    {(Chat) =&gt; <Chat {...props}/>}
+  </Bundle>
+);</p>
+<pre><code class="hljs undefined">[在react-router4中进行代码拆分（基于webpack）](http://www.jianshu.com/p/547aa7b92d8c)
+
+component render children只能使用其中一个
+
+## v3 and v4
+
+### Router
+- 在v3中，仅有一个`<Router>` 组件，需要在`<Router>`上提供一个 history 属性来选择使用的方式
+
+此外,可以使用 routes 作为 `<Router>` 的属性或者使用 children 的方式来定义程序的路由结构。
+    -</code></pre><p>// v3
+import routes from &#39;./routes&#39;</p>
+<p><Router history={browserHistory} routes={routes} />
+// or</p>
+<p><Router history={browserHistory}>
+  <Route path='/' component={App}>
+    // ...
+  </Route>
+</Router></p>
+<pre><code class="hljs undefined">- 在v4中，可以有很多不同的 router 组件，每个 router 组件都会为创造出一个 history 对象。
+
+在v4中，没有集中的路由配置。任何需要根据路由渲染内容的地方，只需渲染一个 `<Route>` 组件。
+    -</code></pre><p>// v4</p>
+<BrowserRouter>
+  <div>
+    <Route path='/about' component={About} />
+    <Route path='/contact' component={Contact} />
+  </div>
+</BrowserRouter>
+<code>- v4 router 组件只能有一个根节点
+    -</code>
+// yes
+<BrowserRouter>
+  <div>
+    <Route path='/about' component={About} />
+    <Route path='/contact' component={Contact} />
+  </div>
+</BrowserRouter>
+
+<p>// no</p>
+<p><BrowserRouter>
+  <Route path='/about' component={About} />
+  <Route path='/contact' component={Contact} />
+</BrowserRouter></p>
+<pre><code class="hljs undefined">- 在 v3，`<Route>` 并不是一个组件,所有的`<Route>` 元素仅用于创建路由配置对象。
+    -</code></pre><p>/// in v3 the element</p>
+<p><Route path='contact' component={Contact} />
+// 相当于
+{
+  path: &#39;contact&#39;,
+  component: Contact
+}</p>
+<pre><code class="hljs undefined">    - 在 v4中，每个`<Route>` 都是一个组件，所以无论你在哪里渲染 <Route>，它里面的内容都会被渲染。当 `<Route>` 的 path 与当前的路径匹配时，它将会渲染 component, render, or children 属性中的内容，当 `<Route>` 的 path 与当前的路径不匹配时，将会渲染 null
+
+### 路由嵌套
+在 v3 中，`<Route>` 组件是作为其父 `<Route>` 组件的 children 嵌套其中的。
+</code></pre><p><Route path='parent' component={Parent}>
+  <Route path='child' component={Child} />
+  <Route path='other' component={Other} />
+</Route></p>
+<pre><code class="hljs undefined">
+当嵌套的 `<Route>` 匹配时，react 元素将会使用子 `<Route>` 和 父 `<Route>` 的 component 属性去构建，子元素将作为父元素的 children 属性。
+</code></pre><p><Parent {...routeProps}>
+  <Child {...routeProps} />
+</Parent></p>
+<pre><code class="hljs undefined">
+使用 v4，子 `<Route>` 应该由父 `<Route>` 呈现。
+</code></pre><Route path='parent' component={Parent} />
+
+<p>const Parent = () =&gt; (
+  <div>
+    <Route path='child' component={Child} />
+    <Route path='other' component={Other} />
+  </div>
+)</p>
+<pre><code class="hljs undefined">
+
+### on* 属性
+react-router v3 提供 onEnter, onUpdate, and onLeave 方法。这些方法本质上是重写（覆盖）了 react 生命周期方法
+
+使用 v4，你将会使用生命周期方法 通过 `<Route>` 渲染的组件，你可以使用 componentDidMount 或 componentWillMount 代替 onEnter，你可以使用 componentDidUpdate 或者 componentWillUpdate (更或者 componentWillReceiveProps) 代替 onUpdate，你可以使用 componentWillUnmount 代替 onLeave。
+
+
+### `<Switch>`
+在v3中，您可以指定一些子路由，并且只会渲染匹配到的第一个
+</code></pre><p>// v3</p>
+<p><Route path='/' component={App}>
+  <IndexRoute component={Home} />
+  <Route path='about' component={About} />
+  <Route path='contact' component={Contact} />
+</Route></p>
+<pre><code class="hljs undefined">
+v4 通过 `<Switch>` 组件提供了相似的功能，当 `<Switch>` 被渲染时，它仅会渲染与当前路径匹配的第一个子 `<Route>`。
+</code></pre><p>// v4</p>
+<p><HashRouter>
+    <div>
+        <Route exact path="/" component={Index} />
+        <Switch>
+            <Route path="/page" component={Page} />
+            <Route path="/page/:id" component={PageIndex} />
+        </Switch>
+    </div>
+</HashRouter></p>
+<pre><code class="hljs undefined">
+一般在使用时,将最容易被匹配到的写在最下面
+</code></pre><p><Switch>
+    <Route path="/page/:id" component={PageIndex} />
+    <Route path="/page" component={Page} />
+    <Route path="/" component={Index} />
+</Switch></p>
+<pre><code class="hljs undefined">
+## 实现路由
+
+### 用hash实现路由
+- 如现在有一下网址
+    -</code></pre><p>http://www.example.com/
+http://www.examplt.com/#edit
+http://www.examplt.com/#settings</p>
+<pre><code class="hljs undefined">- 访问 / 时，呈现主页。
+
+点击页面上的 Edit 按钮，页面呈现编辑对应的内容。通过 url 直接访问时，检查 hash 是否和 edit 匹配，如果匹配执行加载编辑内容的代码
+
+点击页面上的 Settings 按钮，页面呈现设置对应的内容。通过 url 直接访问时，检查 hash 是否和 settings 匹配，如果匹配执行加载编辑内容的代码。 
+以下是伪代码：
+    -</code></pre><p>function hashHandler () {
+  let key = location.hash.slice(1);
+  switch(key) {
+    case &#39;edit&#39;:
+      renderEditPanel();
+      break;
+    case &#39;settings&#39;:
+      renderSettings();
+      break;
+     default:
+      break;
+  }
+}
+window.onload = () =&gt; {
+  hashHandler();
+}
+window.onhashchange = () =&gt; {
+  hashHandler();
+}
+<code>`</code></p>
+<h2 id="-">源码分析</h2>
+<h2 id="bugs">bugs</h2>
+<p>使用BrowserRouter时, 如果在嵌套层级下刷新,那么会无法请求到页面</p>
+<p>感觉是状态没有被传递的问题</p>
+<h2 id="-">参考</h2>
+<p><a href="https://zhuanlan.zhihu.com/p/27433116" title="" target="_blank">React Router v4 几乎误我一生
+</a></p>
+<p><a href="http://huziketang.com/blog/posts/detail?postId=58d36df87413fc2e82408555" title="" target="_blank">http://huziketang.com/blog/posts/detail?postId=58d36df87413fc2e82408555</a></p>
+<p><a href="http://dev.dafan.info/detail/363302?p=14" title="" target="_blank">初探 React Router 4.0</a></p>
+<p><a href="http://www.jianshu.com/p/1781bc1dd938#33-navlink" title="" target="_blank">React-Router v4 学习</a></p>
+<p><a href="https://www.edlad.com/2017/05/08/react-router-web-api/#BrowserRouter-basename-string" title="" target="_blank">React Router 4 - WEB API</a></p>
+<p><a href="http://www.reactpeixun.com/reactjiaocheng/2017-07-07/310.html" title="" target="_blank">入门React-router4</a></p>
+<p><a href="http://www.wquanzhan.com/tutorial/react-router/started" title="" target="_blank">React-router中文</a></p>
+
+    </main>
+  </div>
+</body>
+
+</html>
