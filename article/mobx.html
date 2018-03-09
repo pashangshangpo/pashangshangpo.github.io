@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>mobx-追梦子</title>
+  <link rel="stylesheet" href="/css/reset.css">
+  <link rel="stylesheet" href="/css/markdown.css">
+  <link rel="stylesheet" href="/css/monokai-sublime.css">
+  <link rel="stylesheet" href="/css/info.css">
+</head>
+<body>
+  <div class="box">
+    <header>
+      <h1 data-pc>mobx</h1>
+    </header>
+    <main class="markdown-body">
+      <h2 id="-">简单，可扩展的状态管理</h2>
+<h2 id="-">文档</h2>
+<h3 id="-observable">@observable</h3>
+<p>观察一个值</p>
+<code class="javascript"><pre><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Todo</span> </span>{
+    id = <span class="hljs-built_in">Math</span>.random();
+    @observable title = <span class="hljs-string">""</span>;
+    @observable finished = <span class="hljs-literal">false</span>;
+}</pre></code><h3 id="-computed">@computed</h3>
+<p>在有些时候，state 并不一定是我们需要的最终数据。例如，所有的 todo 都放在 store.todos 中，而已经完成的 todos 的值(store.unfinishedTodos)，可以由 store.todos 衍生而来。</p>
+<p>对此，mobx 提供了 computed 装饰器，用于获取由基础 state 衍生出来的值。如果基础值没有变，获取衍生值时就会走缓存，这样就不会引起虚拟 DOM 的重新渲染。</p>
+<p>通过 @computed + getter 函数来定义衍生值（computed values）。</p>
+<code class="javascript"><pre><span class="hljs-keyword">import</span> React, {Component} <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> { render } <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+<span class="hljs-keyword">import</span> {observable, action, computed,useStrict} <span class="hljs-keyword">from</span> <span class="hljs-string">'mobx'</span>;
+<span class="hljs-keyword">import</span> {observer} <span class="hljs-keyword">from</span> <span class="hljs-string">'mobx-react'</span>;
+
+useStrict(<span class="hljs-literal">true</span>);
+
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Store</span> </span>{
+  @observable todos = [{
+    <span class="hljs-attr">title</span>: <span class="hljs-string">"todo标题"</span>,
+    <span class="hljs-attr">done</span>: <span class="hljs-literal">false</span>,
+  },{
+    <span class="hljs-attr">title</span>: <span class="hljs-string">"已经完成 todo 的标题"</span>,
+    <span class="hljs-attr">done</span>: <span class="hljs-literal">true</span>,
+  }];
+
+  @action changeTodoTitle({index,title}){
+    <span class="hljs-keyword">this</span>.todos[index].title = title
+  }
+
+  @computed get unfinishedTodos () {
+    <span class="hljs-keyword">return</span>  <span class="hljs-keyword">this</span>.todos.filter(<span class="hljs-function">(<span class="hljs-params">todo</span>) =&gt;</span> todo.done)
+  }
+}
+
+
+@observer
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TodoBox</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Component</span>  </span>{
+
+  render() {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'render'</span>);
+    <span class="hljs-keyword">return</span> (
+      &lt;div&gt;
+        &lt;ul&gt;
+          { /* 把 unfinishedTodos 换成 todos，点击修改标题就会在控制台打印 "render".*/ }
+          {this.props.store.unfinishedTodos.map(
+            (todo,index) =&gt; &lt;li key={index}&gt;{todo.title}&lt;/li&gt;
+          )}
+        &lt;/ul&gt;
+        &lt;div&gt;
+          &lt;input type="button" onClick={() =&gt; {
+            this.props.store.changeTodoTitle({index:0,title:"修改后的todo标题"});
+          }} value="修改标题"/&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    )
+  }
+}
+
+const store = new Store();
+
+render(
+  &lt;TodoBox store={store} /&gt;,
+  document.getElementById('root')
+);</pre></code><h3 id="-observer">@observer</h3>
+<p>将react组件设置成可观察组件</p>
+<p>可用作React组件周围的高阶组件。
+如果在组件的渲染功能中使用的任何可观测值已更改，则组件将自动重新呈现。</p>
+<code class="javascript"><pre><span class="hljs-keyword">import</span> React, {Component} <span class="hljs-keyword">from</span> <span class="hljs-string">'react'</span>;
+<span class="hljs-keyword">import</span> ReactDOM <span class="hljs-keyword">from</span> <span class="hljs-string">'react-dom'</span>;
+<span class="hljs-keyword">import</span> {observer} <span class="hljs-keyword">from</span> <span class="hljs-string">"mobx-react"</span>;
+
+@observer
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TodoListView</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Component</span> </span>{
+    render() {
+        <span class="hljs-keyword">return</span> &lt;div&gt;
+            &lt;ul&gt;
+                {this.props.todoList.todos.map(todo =&gt;
+                    &lt;TodoView todo={todo} key={todo.id} /&gt;
+                )}
+            &lt;/ul&gt;
+            Tasks left: {this.props.todoList.unfinishedTodoCount}
+        &lt;/div&gt;
+    }
+}
+
+const TodoView = observer(({todo}) =&gt;
+    &lt;li&gt;
+        &lt;input
+            type="checkbox"
+            checked={todo.finished}
+            onClick={() =&gt; todo.finished = !todo.finished}
+        /&gt;{todo.title}
+    &lt;/li&gt;
+)
+
+const store = new TodoList();
+ReactDOM.render(&lt;TodoListView todoList={store} /&gt;, document.getElementById('mount'));</pre></code><h3 id="autorun">autorun</h3>
+<p>当autorun中用到的observable的值,那么在observable改变时将会再次运行此方法</p>
+<p>第一次也会运行</p>
+<code class="javascript"><pre><span class="hljs-keyword">import</span> { observable, autorun } <span class="hljs-keyword">from</span> <span class="hljs-string">'mobx'</span>;
+
+<span class="hljs-keyword">const</span> value = observable(<span class="hljs-number">0</span>);
+<span class="hljs-keyword">const</span> number = observable(<span class="hljs-number">100</span>);
+
+autorun(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> {
+  <span class="hljs-built_in">console</span>.log(value.get());
+});
+
+value.set(<span class="hljs-number">1</span>);
+value.set(<span class="hljs-number">2</span>);
+number.set(<span class="hljs-number">101</span>);</pre></code><p>依次输出0,1,2。</p>
+<p>当观测到的数据发生变化的时候，如果变化的值处在autorun中，那么autorun就会自动执行。
+上例中的autorun函数中，只对value值进行了操作，而并没有number值的什么事儿，所以number.set(101)这步并不会触发autorun，只有value的变化才触发了autorun。</p>
+<p>这通常是当你需要从反应式代码桥接到命令式代码的情况，例如打印日志、持久化或者更新UI的代码</p>
+<ul>
+<li>截获autorun抛出的错误<ul>
+<li><code>`</code>
+let store = new Store();</li>
+</ul>
+</li>
+</ul>
+<p>let dispose = autorun(() =&gt; {
+    if (store.todos.length &gt; 5) {
+        throw new Error(&#39;error&#39;);
+    }
+});</p>
+<p>dispose.onError((e) =&gt; {
+    console.log(&#39;错误&#39;);
+});</p>
+<code class="javascript"><pre>
+### useStrict
+可以通过引入 mobx 定义的严格模式，强制使用 action 来修改状态。
+</pre></code><p>import {useStrict} from &#39;mobx&#39;;</p>
+<p>useStrict(true);</p>
+<code class="javascript"><pre>
+
+### trasaction
+批量改变时，通过 trasaction 包装，只会触发一次 autorun。
+
+
+### extendsObservable
+对类的属性或实例，进行监听。
+
+
+### map
+使用 asMap 将对象转化为 map。
+
+
+### action-strict
+在 mobx.usrStrict(true)时，只能通过 action 触发值的改变。
+
+
+### when
+类似 autorun.
+
+mobx.when 第一个参数是一个函数，初始化时也会自动执行。该函数返回一个 boolean 值，当返回值为 true 的时候，才会继续触发第一个函数。当返回值为 flase 时，不再继续监听。这时会执行 mobx.when 的第二个参数，这个参数也是一个函数。
+
+
+### reaction
+类似 autorun.
+
+reaction 不会在初始化时执行，只会在值改变的时候执行。
+
+该函数有 2 个值，第一个参数是一个函数，返回监听的值.
+
+第二个参数，也是一个函数，会在值改变的时候执行。
+
+
+### spy
+类似 aoturun.
+
+监听所有 mobx 的事件。
+
+包含一个 type ，该值用来区分执行事件的类型。
+
+
+### whyRun
+用于调试，打印 autorun 为什么会触发。
+
+
+### 工具函数
+- toJS(obser)
+    - 把 observable 数据结构转换成普通的 javascript 对象并忽略计算值
+- isObservable(thing, property?)
+    - 如果给定的thing，或者thing指定的property是 observable 的话，返回true。 适用于所有的 observable、计算值和 reaction 的清理函数
+- isObservableObject|Array|Map 和 isBoxedObservable
+    - 用法: isObservableObject(thing), isObservableArray(thing), isObservableMap(thing), isBoxedObservable(thing)。 如果类型匹配的话返回true。
+- isArrayLike
+    - 用法: isArrayLike(thing)。如果给定的thing是 javascript 数组或者 observable (MobX的)数组的话，返回true。 这个方法更简便。 注意，observable 数组可以通过 .slice() 转变成 javascript 数组。
+- isAction
+    - 用法: isAction(func)。如果给定函数是用action 方法包裹的或者是用 @action 装饰的话，返回true。
+- isComputed
+    - 用法: isComputed(thing, property?)。如果给定的thing是计算值或者thing指定的property是计算值的话，返回true。
+反应类似于计算值，但是反应不会产生新的值，而是产生副作用，例如打印到控制台，进行网络请求，逐步更新React组件树以修补DOM等。简而言之， 反应桥反应和命令式编程。
+
+## 教程
+
+### 入门教程
+http://blog.csdn.net/u012125579/article/details/69400169
+
+
+### 在create-react-app中使用装饰器
+create-react-app ExampleApp
+
+npm run eject
+
+- 非react
+    - npm install --save-dev babel-plugin-transform-decorators-legacy
+- 针对react
+    - npm install  babel-preset-stage-2 --save-dev
+    - npm install babel-preset-react-native-stage-0 --save-dev
+npm install --save mobx mobx-react
+
+- 根目录下创建.babelrc
+    -</pre></code><p>// react
+{
+  &quot;presets&quot;: [&quot;react-native-stage-0/decorator-support&quot;]
+}</p>
+<p>// 非react
+{
+  &quot;presets&quot;: [
+    &quot;es2015&quot;,
+    &quot;stage-1&quot;
+  ],
+  &quot;plugins&quot;: [&quot;transform-decorators-legacy&quot;]
+}</p>
+<code class="javascript"><pre>
+### 使用MobX制作一个应用程序，归结为以下三个步骤
+- 1.定义你的状态并使其可观察, 定义要被监听的
+    -</pre></code><p>import {observable} from &#39;mobx&#39;;</p>
+<p>var appState = observable({
+    timer: 0
+});</p>
+<code class="javascript"><pre>    - 或
+    -</pre></code><p>class Todo {
+    id = Math.random();
+    @observable title;
+    @observable finished = false;
+    constructor(title) {
+        this.title = title;
+    }
+}</p>
+<code class="javascript"><pre>- <span class="hljs-number">2.</span>创建响应状态更改的视图, 进行监听
+    -</pre></code><p>import {observer} from &#39;mobx-react&#39;;</p>
+<p>@observer
+class TimerView extends React.Component {
+    render() {
+        return (<button onClick={this.onReset.bind(this)}>
+                Seconds passed: {this.props.appState.timer}
+            </button>);
+    }</p>
+<code class="javascript"><pre>onReset () {
+    <span class="hljs-keyword">this</span>.props.appState.resetTimer();
+}</pre></code><p>};</p>
+<p>ReactDOM.render(<TimerView appState={appState} />, document.body);</p>
+<code class="javascript"><pre>- <span class="hljs-number">3.</span>修改状态
+    -</pre></code><p>import React, {Component} from &#39;react&#39;;
+import {observable, computed} from &#39;mobx&#39;;
+import {observer} from &#39;mobx-react&#39;;</p>
+<p>let data = observable({
+    num: 0
+});</p>
+<p>@observer
+export default class App extends Component {</p>
+<code class="javascript"><pre>upNum(){
+    data.num = data.num + <span class="hljs-number">1</span>;
+}
+
+render() {
+    <span class="hljs-keyword">return</span> (
+        <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this.upNum.bind(this)}</span>&gt;</span>更新<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">p</span>&gt;</span>{data.num}<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+    );
+}</pre></code><p>}</p>
+<code class="javascript"><pre>## 例子
+
+### todo已完成未完成</pre></code><p>import React, {Component} from &#39;react&#39;;
+import {observable, computed, action} from &#39;mobx&#39;;
+import {observer} from &#39;mobx-react&#39;;</p>
+<p>class Store {
+    @observable todos =  [
+        {
+            title: &#39;html&#39;,
+            done: false
+        },
+        {
+            title: &#39;css&#39;,
+            done: true
+        },
+        {
+            title: &#39;js&#39;,
+            done: true
+        }
+    ];</p>
+<code class="javascript"><pre>@action addTodo(todo) {
+    <span class="hljs-keyword">this</span>.todos.push(todo);
+};
+
+@computed get okDone() {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.todos.filter(<span class="hljs-function">(<span class="hljs-params">item</span>) =&gt;</span> item.done);
+}
+
+@computed get notDone() {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.todos.filter(<span class="hljs-function">(<span class="hljs-params">item</span>) =&gt;</span> !item.done);
+}</pre></code><p>}</p>
+<p>let store = new Store();</p>
+<p>@observer
+export default class App extends Component {</p>
+<code class="javascript"><pre>upNum(){
+    store.addTodo({
+        <span class="hljs-attr">title</span>: <span class="hljs-string">'test'</span> + <span class="hljs-built_in">Math</span>.random(),
+        <span class="hljs-attr">done</span>: <span class="hljs-built_in">Math</span>.random() * <span class="hljs-number">10</span> &gt; <span class="hljs-number">5</span> ? <span class="hljs-literal">true</span> : <span class="hljs-literal">false</span>
+    });
+}
+
+render() {
+    <span class="hljs-keyword">return</span> (
+        <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this.upNum.bind(this)}</span>&gt;</span>更新<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">h2</span>&gt;</span>已完成<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span>
+                    {
+                        store.okDone.map((item, index) =&gt; (
+                            <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{index}</span>&gt;</span>{item.title}<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+                        ))
+                    }
+                <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">h2</span>&gt;</span>未完成<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span>
+                    {
+                        store.notDone.map((item, index) =&gt; (
+                            <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{index}</span>&gt;</span>{item.title}<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+                        ))
+                    }
+                <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+    );
+}</pre></code><p>}</p>
+<code class="javascript"><pre>
+
+### 在全局共享数据
+- Provider
+    - 共享数据
+    - 充当一个中间件
+    - 注意只能共享被observable监听过的数据
+- inject
+    - 导入数据
+    - 只能给类使用
+    - 导入所有传递的数据
+        -</pre></code><p>@inject((props) =&gt; props) @observer</p>
+<code class="javascript"><pre>    - 导入多条数据,使用逗号隔开
+        -</pre></code><p>@inject(&#39;n1&#39;, &#39;n2&#39;) @observer</p>
+<code class="javascript"><pre>- 例子
+    - index.js
+        -</pre></code><p>import React from &#39;react&#39;;
+import {render} from &#39;react-dom&#39;;
+import App from &#39;./App&#39;;</p>
+<p>render(
+    <App />,
+    document.getElementById(&#39;root&#39;)
+);</p>
+<code class="javascript"><pre>    - App.js
+        -</pre></code><p>import React, {Component} from &#39;react&#39;;
+import {Provider} from &#39;mobx-react&#39;;
+import Todo from &#39;./Todo&#39;;
+import toDoStore from &#39;./toDoStore&#39;;
+import testStore from &#39;./testStore&#39;;</p>
+<p>export default class App extends Component {
+    render() {
+        return (
+            <Provider todoStore={new toDoStore()} testStore={new testStore()} >
+                <Todo/>
+            </Provider>
+        );
+    }
+}</p>
+<code class="javascript"><pre>    - Todo.js
+        -</pre></code><p>import React, {Component} from &#39;react&#39;;
+import {observer, inject} from &#39;mobx-react&#39;;</p>
+<p>@inject(&#39;testStore&#39;) @observer
+class Test extends Component {
+    render() {
+        return (
+            <div>{this.props.testStore.test}</div>
+        );
+    }
+}</p>
+<p>@inject((props) =&gt; props) @observer
+export default class Todo extends Component {</p>
+<code class="javascript"><pre>upNum(){
+    <span class="hljs-keyword">this</span>.props.todoStore.addTodo({
+        <span class="hljs-attr">title</span>: <span class="hljs-string">'test'</span> + <span class="hljs-built_in">Math</span>.random(),
+        <span class="hljs-attr">done</span>: <span class="hljs-built_in">Math</span>.random() * <span class="hljs-number">10</span> &gt; <span class="hljs-number">5</span> ? <span class="hljs-literal">true</span> : <span class="hljs-literal">false</span>
+    });
+}
+
+render() {
+    <span class="hljs-keyword">const</span> store = <span class="hljs-keyword">this</span>.props.todoStore;
+
+    <span class="hljs-keyword">return</span> (
+        <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onClick</span>=<span class="hljs-string">{this.upNum.bind(this)}</span>&gt;</span>更新<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">h2</span>&gt;</span>已完成<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span>
+                    {
+                        store.okDone.map((item, index) =&gt; (
+                            <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{index}</span>&gt;</span>{item.title}<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+                        ))
+                    }
+                <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">h2</span>&gt;</span>未完成<span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span>
+                    {
+                        store.notDone.map((item, index) =&gt; (
+                            <span class="hljs-tag">&lt;<span class="hljs-name">li</span> <span class="hljs-attr">key</span>=<span class="hljs-string">{index}</span>&gt;</span>{item.title}<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+                        ))
+                    }
+                <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+            <span class="hljs-tag">&lt;<span class="hljs-name">Test</span>/&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>
+    );
+}</pre></code><p>}</p>
+<code class="javascript"><pre>    - toDoStore.js
+        -</pre></code><p>import {observable, computed, action} from &#39;mobx&#39;;</p>
+<p>export default class toDoStore {
+    @observable todos =  [
+        {
+            title: &#39;html&#39;,
+            done: false
+        },
+        {
+            title: &#39;css&#39;,
+            done: true
+        },
+        {
+            title: &#39;js&#39;,
+            done: true
+        }
+    ];</p>
+<code class="javascript"><pre>@action addTodo(todo) {
+    <span class="hljs-keyword">this</span>.todos.push(todo);
+};
+
+@computed get okDone() {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.todos.filter(<span class="hljs-function">(<span class="hljs-params">item</span>) =&gt;</span> item.done);
+}
+
+@computed get notDone() {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.todos.filter(<span class="hljs-function">(<span class="hljs-params">item</span>) =&gt;</span> !item.done);
+}</pre></code><p>}</p>
+<code class="javascript"><pre>    - testStore.js
+        -</pre></code><p>import {observable} from &#39;mobx&#39;;</p>
+<p>export default class testStore {
+    @observable test = &#39;hello&#39;;
+}
+<code>`</code></p>
+
+    </main>
+  </div>
+  <script src="/js/init.js"></script>
+</body>
+</html>
