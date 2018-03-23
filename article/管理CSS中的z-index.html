@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="referrer" content="never">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>管理CSS中的z-index-追梦子</title>
+  <link rel="stylesheet" href="/css/reset.css">
+  <link rel="stylesheet" href="/css/markdown.css">
+  <link rel="stylesheet" href="/css/monokai-sublime.css">
+  <link rel="stylesheet" href="/css/gitment.css">
+  <link rel="stylesheet" href="/css/info.css">
+</head>
+<body>
+  <div class="box">
+    <header data-pc>
+      <h1>管理CSS中的z-index</h1>
+    </header>
+    <main class="markdown-body">
+      <h2 id="-z-index-">为什么要管理z-index?</h2>
+<p>不知道大家有没有遇到一个问题, 比如在多人协同开发一个项目时,你和其他同事在同一个页面使用了绝对定位,而因对方写的z-index层级比你写的元素层级高,因此你写的那个元素被对方的元素给盖住了</p>
+<p>一般遇到这种情况,可能我们的做法是把z-index值调成很大,因此我们常常会在代码中看到z-index: 99999这种东西, 而之所以我们喜欢把z-index值调成很大,是因为我们也不知道该给z-index值设置成多大才合适,但将值设置的非常大一般能比较快的解决问题</p>
+<p>但这样做并不是一个好的方案,因为这样改了之后,还是有可能把其他元素给盖住, 它只能解决眼前的问题</p>
+<p>当然就算不是多人协同开发, 也同样会遇到这个问题, 当项目比较复杂的情况下, 你很难清楚的知道每个元素的z-index值到底给多少, 而只要你不知道元素的层级该给多少,你就有可能会乱用z-index, 那么前面说的元素被盖住的情况就会发生</p>
+<p>而我今天要说的就是怎么去管理CSS中的z-index</p>
+<p>不过我要说的是, 以下所讲的方案并不能完全去解决以上所说的问题, 它只能是尽量避免问题的发生</p>
+<p>我很喜欢&lt;把时间当作朋友&gt;里,作者说的一句话: 有些时候，有些事物，从反面描述比从正面描述更为容易。如若先仔细说清楚这不是什么，之后，至于它究竟是什么，很可能就不言自明了。</p>
+<h2 id="-z-index-">管理z-index的思路</h2>
+<p>一开始我的想法是,写一段js之类的东西来实现自动计算z-index值,但很快我就放弃了这一想法,因为z-index值很难去通过程序给计算出来, 原因是每个z-index值是有意义的, 而程序是不知道该给哪个元素层级高,哪个元素层级低, 因此z-index值还是需要我们人工去添加的, 只不过怎么去添加就是另外一回事了</p>
+<p>我们知道如果有大量的数字,那么人是比较难去记住的, 而如果这些数字是有语义的, 那么就会容易很多, 而这里要分享的一种思路就是通过语义化z-index来解决我们前面说的问题</p>
+<p>想一下我们为什么要给元素添加z-index,原因就是我们希望某个元素在别的元素更前面, 而哪类元素我们希望最先看到它,这是我们可以确定的,因为规则是我们自己定的</p>
+<p>比如说页面的背景,内容以及弹层,这几个中弹层的层级肯定是比背景和内容的层级高的</p>
+<p>假如我们事先定义好每个类型的元素它的层级是多少,那么是不是就可以很大程度上解决我们的问题呢,比如下面这个例子</p>
+<p>示例</p>
+<code class="javascript"><pre>:root {
+    --z-background: <span class="hljs-number">1</span>;
+    --z-<span class="hljs-keyword">default</span>: <span class="hljs-number">2</span>;
+    --z-layer: <span class="hljs-number">3</span>;
+}
+
+.default {
+    z-index: <span class="hljs-keyword">var</span>(--z-<span class="hljs-keyword">default</span>);
+}
+
+.background {
+    z-index: <span class="hljs-keyword">var</span>(--z-background);
+}
+
+.layer {
+    z-index: <span class="hljs-keyword">var</span>(--z-layer);
+}</pre></code><p>以上分别定义了三个变量(背景,内容,弹层),弹层的权重最高,相反背景的层级最低</p>
+<p>当我们需要给元素设置z-index时,就去调用相应的变量</p>
+<p>这样做的好处就是,z-index在我们可控的范围,而不至于每个开发人员想写成多少就写成多少</p>
+<p>尽管如此, 还是会遇到另外一种情况, 比如当两个元素类型相同的情况下,默认是越靠后的元素层级越高, 但如果我们希望靠后的那个元素层级比靠前的那个元素层级高,该怎么办?</p>
+<p>这时我们就需要调整一下变量名了, 调整后的代码如下</p>
+<code class="javascript"><pre>:root {
+    --z-background: <span class="hljs-number">1</span>;
+    --z-<span class="hljs-keyword">default</span>: <span class="hljs-number">2</span>;
+    --z-layer: <span class="hljs-number">3</span>;
+    --z-layer-important: <span class="hljs-number">4</span>;
+}</pre></code><p>这里在最后新增了一个变量, 表示这个东西是比较重要的,当我们遇到前面说的那种情况,就可以用这种办法解决</p>
+<p>但就算如此,在实际项目中还是有可能出现多个元素需要同时展示,而且层级相同, 在这种情况下我们就只能把命名再细分, 不过如你真的遇到这种情况,建议检测一下html写的是否规范, 如果你的html是按照结构化来设计的那么出现这种情况的概率比较小</p>
+<p>另外要说的是,不要跟我上面那样按照顺序去写权重值, 也就是不要写成1,2,3,4这种, 因为你无法保证之后不再添加新的东西, 假如你按照以上的方式来写, 此时你需要添加一个类型, 但它的权重比2大比3小, 那你该怎么办</p>
+<p>也不要想着用小数了,因为z-index是不支持小数点的,再者这本身就不是一个好的方案, 为了避免这种情况的发生, 我的建议是每个类型的权重值至少留10个空间, 那留10个空间是否还会遇到这种情况呢? 整体来看基本不会, 因为很少去同时展示这么多的类型, 在实际开发中我也没有遇到过这种情况, 当然如果你想更保守一点把空间留的大一些,那也是可以的</p>
+<p>我们还需要去考虑另外一种情况, 比如有AB两个元素,A里面有一个子元素并且z-index是100,B元素原封不动,但显示出来的效果却是B元素比A里面的子元素层级高, 因为层级的高低比较只对同级元素有效, 而因为A元素的z-index与B元素的z-index相同,又因越往后的元素层级越高,所以尽管A的子元素比B元素的层级高,但最终的效果却是B元素的层级高过A的子元素</p>
+<p>当遇到这种情况,我们可以把父元素的z-index设置成子元素的z-index</p>
+<p>那我们是将父元素的z-index值设置成最大子元素的z-index值还是? 我的建议是去看这些元素对外界是否有影响, 如果说它不需要去影响外界的东西,那么就只需要给比较小的层级,如果需要去影响外界的东西那么就设置成最大子元素的z-index</p>
+<p>怎么理解是否对外界有影响, 比如你只是为了解决顺序导致的z-index问题,那么给最小的z-index值就行了, 而如果是希望它在最上边显示,那么就给最大值</p>
+<p>在实际开发中, 还是需要自己去多考虑一下该怎么设计权重值比较合理, 不然还是会一团糟, 另外如果使用了这套方案那么在使用到z-index的情况下就都需要用这些事先定义好的变量, 不然就没意义了</p>
+<p>虽然这种方式不能完全避免层级问题,但是却能比较好的解决由不同类型的层级导致的bug</p>
+<h2 id="-">参考</h2>
+<p><a href="https://www.w3cplus.com/preprocessor/better-solution-managing-z-index-sass.html" title="" target="_blank">使用Sass管理z-index更好的解决方案
+</a></p>
+<p><a href="https://www.sass.hk/skill/sass80.html" title="" target="_blank">Sass管理复杂的z-index</a></p>
+<p><a href="https://github.com/lijinghust/lijinghust.github.com/issues/2" title="" target="_blank">WEB三层设计结构------管理z-index的神方案</a></p>
+
+      <a data-pc class="go-home go-home-top" href="/">返回主页</a>
+    </main>
+    <div class="reward">
+      <p class="title">赏</p>
+      <div class="benefit">
+        <div>
+          <img src="/img/zfb.png" alt="">
+          <p>支付宝</p>
+        </div>
+        <div>
+          <img src="/img/wx.png" alt="">
+          <p>微信</p>
+        </div>
+      </div>
+    </div>
+    <a class="go-home go-home-bottom" href="/">返回主页</a>
+    <div id="comments"></div>
+  </div>
+  <script src="/js/init.js"></script>
+  <script src="/js/pv.js"></script>
+  <script src="/js/gitment.js"></script>
+  <script>
+    const gitment = new Gitment({
+      id: '管理CSS中的z-index',
+      owner: 'pashangshangpo',
+      repo: 'pashangshangpo',
+      oauth: {
+        client_id: '858772be76a336fa182a',
+        client_secret: '21581b0b9d386167ecb8744c0f2fcd6bc3042242'
+      }
+    });
+
+    gitment.render('comments');
+  </script>
+</body>
+</html>
