@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="referrer" content="never">
+  <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>我是这样做时间管理的(上)-追梦子</title>
+  <link rel="stylesheet" href="/css/reset.css">
+  <link rel="stylesheet" href="/css/markdown.css">
+  <link rel="stylesheet" href="/css/monokai-sublime.css">
+  <link rel="stylesheet" href="/css/gitment.css">
+  <link rel="stylesheet" href="/css/info.css">
+</head>
+<body>
+  <div class="box">
+    <header data-pc>
+      <h1>我是这样做时间管理的(上)</h1>
+    </header>
+    <main class="markdown-body">
+      <h2 id="-">为什么会想做时间管理</h2>
+<p>在几个月前我的生活和工作规律总是很混乱, 每天看似很忙, 但只要我一回顾就会发现其实真正做的事很少, 更多的是花在无意义的事情上, 现在想来使我生活规律很混乱的原因在于, 我没有合理的去分配时间, 明天我要做什么, 有多少时间可以做这些事, 哪些是必须完成的, 哪些事在哪个时间段来做会比较好? 如何有效的去做这些事? 正是因为之前我没有提前去思考这些问题才会导致混乱的局面</p>
+<p>不过我真正想做时间管理的原因在于, 我希望自己能够把更多的时间花在有价值的事情上, 以及有更多的时间去玩</p>
+<h2 id="-">如何开始时间管理的</h2>
+<p>在实际操作时间管理前我主要是通过看时间管理相关的书籍, 在时间管理方面,我最喜欢的一本书是&lt;奇特的一生&gt;,书中讲述的是一位苏联的昆虫学家, 名叫柳比歇夫的人, 他56年如一日的通过记录每天的时间花费情况做统计, 然后将统计后的结果进行分析, 最后根据分析的结果去安排自己的时间</p>
+<p>看了相关的书籍后,我最先做的是时间记录法, 因为我想先了解自己到底在哪些事情上花了较多时间, 又是怎么花费的, 大概每天有多少可用时间(抛除走路, 闲聊等时间), 只有先了解这些才能真正去实施时间管理</p>
+<p>在开始实施我的时间记录法时, 在网上搜索了下相关的时间记录工具, 但是并没有找到一款适合自己的, 一方面是有些工具的实现者本身对时间管理的不理解, 另一方面是工具的使用过于复杂, 所以最终并没有去使用任何的工具, 而是用了比较笨的方法, 在电脑上新建了一个文本文件, 记录时间的格式大致如下</p>
+<code class="javascript"><pre>日期 
+  名称 目标时间(分钟) 实际时间(分钟) 当前进度 备注</pre></code><p>名称: 就是你要做的事情</p>
+<p>目标时间: 一个预估值, 这件事大概要多久能够完成</p>
+<p>实际时间: 花在这件事上的时间</p>
+<p>备注: 比如这件事你花了很多时间, 那么可以记录下为什么在这件事上花了那么多的时间, 避免下次再出现类似情况</p>
+<p>当前进度: 这件事总体做了多少, 比如你在看&lt;奇特的一生&gt;, 那么就记录当前看了的百分比</p>
+<p>比如2018年1月19日</p>
+<code class="javascript"><pre><span class="hljs-number">20180119</span>
+    服务器mongodb 目标<span class="hljs-number">60</span> <span class="hljs-number">170</span> <span class="hljs-number">100</span>%
+    修复下拉展开列表加载不了，显示为搜索中 目标<span class="hljs-number">60</span>
+    调整tips 目标<span class="hljs-number">30</span> <span class="hljs-number">196</span> <span class="hljs-number">100</span>%
+    验证tips <span class="hljs-number">47</span> <span class="hljs-number">100</span>%
+    修复部分页面tips没有替换 <span class="hljs-number">21</span> <span class="hljs-number">100</span>%
+    取消显示任务信息区域 <span class="hljs-number">100</span>%
+    定时备份mongodb数据库 <span class="hljs-number">116</span> <span class="hljs-number">100</span>% 单独写了一个定时脚本+pm2后台运行,每天<span class="hljs-number">10</span>点备份
+    将静态资源放到server上 <span class="hljs-number">45</span> <span class="hljs-number">100</span>%</pre></code><p>以上是我2018年1月19日一天的记录情况</p>
+<p>实践一段时间之后, 发现目标时间几乎没怎么去写, 主要原因是我做的工作内容有很多不确定的因素在里面, 因此预估的时间和实际时间往往有很大的出路, 所以之后我没有再去写目标时间,当前进度后来也被我去掉了, 因为后来觉得当前进度对我意义不大</p>
+<p>通过时间记录法,我了解到自己每天大概有多少时间是可用的, 在哪些方面浪费的时间比较多, 在知道了自己每天有多少时间可用后, 我会拿当天花在有意义的事情上的时间去做个比较, 看是多了还是少了, 如果是少了那么我会去做个反思, 并做好总结避免下次再出现这种情况</p>
+<p>后来觉得通过手工去记录太过于繁琐, 并且不太直观, 于是就自己开发了一款时间管理工具, 下面是软件的大致界面</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/8749341-a4a46693313459ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/700" title="" alt="" /></p>
+<p>使用软件来记录相比较与手工输入的优点在于, 只需要输入一个名称即可, 自动计算实际花费时间, 而不需要人工去维护, 并且有提醒的功能, 比如你设置了10分钟后提醒, 那么10分钟后就会提醒你, 它可以让你在某个时间段安心的工作而不怕担心超过时间点, 另一点就是避免你陷入在一些细节中而浪费过多时间, 还有一点比较重要的是方便实现数据的统计功能, 毕竟我们记录时间的根本就是为了去分析这些数据, 然后去改进自己</p>
+<p>当然, 不管是使用工具还是手工记录, 它们都只是术, 而解决不了根本问题, 最重要的还是分析后及时改进自己, 这才真正对自己有所帮助</p>
+<h2 id="-">使用时间记录法后对我的影响</h2>
+<p>在使用时间记录法后, 我对要做的事,有了更合理的安排, 在没有使用时间记录法之前, 我是不太清楚我每天能做多少事的, 因此之前往往会安排很多事, 但是当天根本就不可能完成, 也没有考虑会有其他情况出现, 而且在某些事情上浪费了很多的时间也没有一点知觉, 通过时间记录法, 我能够大概知道当天我能完成那些事, 在哪个时间段, 我不太适合去做思考类的事, 哪个时间段工作效率高, 有了这些数据, 我每天的安排相对来说会比较合理, 也不会像之前那样混乱</p>
+<p>其实时间记录法还有一个好处, 那就是你能够分析出, 你对哪些事情感兴趣, 哪些事情不感兴趣</p>
+<h2 id="-">后记</h2>
+<p>今天就讲到这了, 还有一些实践的内容会在下一篇中, 有兴趣的可以关注下</p>
+
+      <a data-pc class="go-home go-home-top" href="/">返回主页</a>
+    </main>
+    <div class="reward">
+      <p class="title">赏</p>
+      <div class="benefit">
+        <div>
+          <img src="/img/zfb.png" alt="">
+          <p>支付宝</p>
+        </div>
+        <div>
+          <img src="/img/wx.png" alt="">
+          <p>微信</p>
+        </div>
+      </div>
+    </div>
+    <a class="go-home go-home-bottom" href="/">返回主页</a>
+    <div id="comments"></div>
+  </div>
+  <script src="/js/init.js"></script>
+  <script src="/js/pv.js"></script>
+  <script src="/js/gitment.js"></script>
+  <script>
+    const gitment = new Gitment({
+      id: '我是这样做时间管理的(上)',
+      owner: 'pashangshangpo',
+      repo: 'pashangshangpo',
+      oauth: {
+        client_id: '858772be76a336fa182a',
+        client_secret: '21581b0b9d386167ecb8744c0f2fcd6bc3042242'
+      }
+    });
+
+    gitment.render('comments');
+  </script>
+</body>
+</html>
